@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday, Love</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --blush: #f5c5c5; --rose: #e07070; --deep: #c04060;
+    --cream: #fdf6f0; --warm: #f9ede8; --text: #3a1e2a; --muted: #9a6878;
+  }
+  html, body { min-height: 100vh; background: var(--cream); font-family: 'DM Sans', sans-serif; color: var(--text); overflow-x: hidden; }
+  .hearts-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+  .hb { position: absolute; opacity: 0; animation: floatHeart linear infinite; color: var(--blush); }
+  @keyframes floatHeart {
+    0% { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.5; } 90% { opacity: 0.3; }
+    100% { transform: translateY(-10vh) rotate(25deg); opacity: 0; }
+  }
+  #envelope-screen {
+    position: fixed; inset: 0; z-index: 100;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: var(--cream); transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  #envelope-screen.gone { opacity: 0; transform: scale(0.92); pointer-events: none; }
+  .env-wrap { position: relative; width: 320px; cursor: pointer; filter: drop-shadow(0 8px 32px rgba(192,64,96,0.15)); transition: transform 0.3s; }
+  .env-wrap:hover { transform: translateY(-4px) scale(1.01); }
+  .env-body { width: 100%; height: 210px; background: linear-gradient(160deg, #f8dde4 0%, #fceef2 60%, #f5d5dc 100%); border-radius: 6px 6px 12px 12px; position: relative; overflow: hidden; }
+  .env-flap { position: absolute; top: 0; left: 0; right: 0; height: 105px; background: linear-gradient(175deg, #eda8b8 0%, #f5c5ce 100%); clip-path: polygon(0 0, 100% 0, 50% 62%); transform-origin: top; transition: transform 0.7s cubic-bezier(0.4,0,0.2,1); z-index: 2; }
+  .env-wrap.opening .env-flap { transform: perspective(400px) rotateX(-180deg); }
+  .env-left { position: absolute; bottom: 0; left: 0; width: 50%; height: 120px; background: linear-gradient(135deg, #f0bfc9 0%, #f8d5dc 100%); clip-path: polygon(0 0, 100% 100%, 0 100%); }
+  .env-right { position: absolute; bottom: 0; right: 0; width: 50%; height: 120px; background: linear-gradient(225deg, #f0bfc9 0%, #f8d5dc 100%); clip-path: polygon(0 100%, 100% 0, 100% 100%); }
+  .env-seal { position: absolute; width: 56px; height: 56px; border-radius: 50%; background: var(--deep); top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 3; display: flex; align-items: center; justify-content: center; font-size: 22px; color: #fff; border: 3px solid rgba(255,255,255,0.3); transition: opacity 0.3s, transform 0.3s; box-shadow: 0 2px 12px rgba(192,64,96,0.3); }
+  .env-wrap.opening .env-seal { opacity: 0; transform: translate(-50%, -50%) scale(0.6); }
+  .env-label { text-align: center; margin-top: 1.75rem; font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 20px; color: var(--muted); letter-spacing: 0.03em; }
+  .env-hint { text-align: center; margin-top: 0.5rem; font-size: 12px; color: #c4a0a8; letter-spacing: 0.08em; animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:0.5} 50%{opacity:1} }
+  #letter { display: none; max-width: 580px; margin: 0 auto; padding: 3rem 1.5rem 5rem; position: relative; z-index: 1; animation: letterReveal 0.9s cubic-bezier(0.4,0,0.2,1) both; }
+  #letter.show { display: block; }
+  @keyframes letterReveal { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+  .letter-top { text-align: center; margin-bottom: 2.5rem; }
+  .hearts-row { font-size: 18px; letter-spacing: 6px; margin-bottom: 1rem; color: var(--rose); animation: heartsWave 3s ease-in-out infinite; }
+  @keyframes heartsWave { 0%,100% { letter-spacing: 6px; } 50% { letter-spacing: 10px; } }
+  .letter-top h1 { font-family: 'Cormorant Garamond', serif; font-size: clamp(36px, 8vw, 58px); font-weight: 300; line-height: 1.1; color: var(--deep); margin-bottom: 0.5rem; }
+  .letter-top h1 em { font-style: italic; font-weight: 600; }
+  .letter-top .subtitle { font-size: 13px; color: var(--muted); letter-spacing: 0.14em; text-transform: uppercase; }
+  .divider { display: flex; align-items: center; gap: 1rem; margin: 2rem 0; }
+  .divider-line { flex: 1; height: 0.5px; background: var(--blush); }
+  .divider-heart { color: var(--rose); font-size: 14px; }
+  .letter-intro { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-style: italic; font-weight: 300; line-height: 1.75; color: var(--text); text-align: center; margin-bottom: 2.5rem; }
+  .day-label { font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 1.25rem; margin-top: 2.5rem; display: flex; align-items: center; gap: 10px; }
+  .day-label::before, .day-label::after { content: ''; flex: 1; height: 0.5px; background: var(--blush); }
+  .stop { display: flex; gap: 16px; margin-bottom: 0.25rem; padding: 1rem 1.25rem; border-radius: 12px; transition: background 0.2s; }
+  .stop:hover { background: var(--warm); }
+  .stop-left { display: flex; flex-direction: column; align-items: center; min-width: 46px; }
+  .stop-time { font-size: 11px; color: var(--muted); text-align: center; line-height: 1.3; margin-bottom: 6px; }
+  .stop-icon { width: 36px; height: 36px; border-radius: 50%; background: var(--blush); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; border: 2px solid rgba(255,255,255,0.8); }
+  .stop-line { width: 1.5px; flex: 1; min-height: 20px; background: linear-gradient(to bottom, var(--blush), transparent); margin-top: 4px; }
+  .stop-content { flex: 1; padding-top: 4px; }
+  .stop-name { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+  .stop-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .stop-tag { display: inline-block; margin-top: 6px; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--deep); background: #fdeaf0; padding: 3px 10px; border-radius: 99px; border: 0.5px solid #f5c0cc; }
+  .stop-tag.opt { color: var(--muted); background: var(--warm); border-color: var(--blush); }
+  .cake-note { margin-top: 2rem; background: #fff8fa; border: 0.5px solid #f5c0cc; border-radius: 14px; padding: 1.25rem 1.5rem; display: flex; align-items: flex-start; gap: 14px; }
+  .cake-icon { font-size: 26px; flex-shrink: 0; margin-top: 2px; }
+  .cake-text .cake-label { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+  .cake-text p { font-family: 'Cormorant Garamond', serif; font-size: 17px; font-style: italic; color: var(--text); line-height: 1.6; }
+  .cake-text .cake-handle { font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--deep); margin-top: 4px; }
+  .closing-card { margin-top: 2rem; background: linear-gradient(135deg, #fdeaf0 0%, #fdf2f8 100%); border: 0.5px solid #f5c0cc; border-radius: 16px; padding: 1.75rem 2rem; text-align: center; }
+  .closing-card p { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-style: italic; font-weight: 300; color: var(--text); line-height: 1.8; }
+  .closing-card .sign { margin-top: 1rem; font-size: 13px; color: var(--muted); letter-spacing: 0.05em; }
+  .closing-card .change-note { margin-top: 1.25rem; padding-top: 1.25rem; border-top: 0.5px solid #f0c0cc; font-size: 13px; color: var(--muted); line-height: 1.7; font-family: 'DM Sans', sans-serif; }
+  .closing-card .change-note strong { color: var(--deep); font-weight: 500; }
+  .bottom-hearts { text-align: center; margin-top: 3rem; font-size: 22px; color: var(--blush); letter-spacing: 10px; animation: heartsWave 4s ease-in-out infinite; }
+</style>
+</head>
+<body>
+<div class="hearts-bg" id="heartsBg"></div>
+<div id="envelope-screen">
+  <div class="env-wrap" id="envWrap" onclick="openEnvelope()">
+    <div class="env-body">
+      <div class="env-flap"></div>
+      <div class="env-left"></div>
+      <div class="env-right"></div>
+      <div class="env-seal">&#9825;</div>
+    </div>
+  </div>
+  <p class="env-label">a little something for you</p>
+  <p class="env-hint">click to open</p>
+</div>
+<div id="letter">
+  <div class="letter-top">
+    <div class="hearts-row">&#9829; &#9829; &#9829;</div>
+    <h1>Happy Birthday,<br><em>my love</em></h1>
+    <p class="subtitle">a whole day in brooklyn, just for you</p>
+  </div>
+  <div class="divider"><div class="divider-line"></div><div class="divider-heart">&#9829;</div><div class="divider-line"></div></div>
+  <p class="letter-intro">I planned something special for your birthday &mdash; a full day exploring Brooklyn together, from a cozy afternoon bite to rooftop drinks under the city lights.</p>
+
+  <div class="day-label">noon &mdash; we start here</div>
+  <div class="stop">
+    <div class="stop-left"><div class="stop-time">12:00<br>pm</div><div class="stop-icon">&#127843;</div><div class="stop-line"></div></div>
+    <div class="stop-content">
+      <div class="stop-name">Brooklyn Curry Project</div>
+      <div class="stop-desc">We're kicking off with authentic Bangalore-style masala dosa and mini idli from a tiny spot that only opens on Saturdays. Locals call it one of the best South Indian food on the East Coast.</div>
+      <span class="stop-tag">&#11088; 4.7 &middot; brunch</span>
+    </div>
+  </div>
+  <div class="stop">
+    <div class="stop-left"><div class="stop-time">1:30<br>pm</div><div class="stop-icon">&#127843;</div><div class="stop-line"></div></div>
+    <div class="stop-content">
+      <div class="stop-name">Tenon Vegan Sushi</div>
+      <div class="stop-desc">Right after, we're heading to one of Brooklyn's most creative vegan sushi spots. Beautiful rolls, inventive flavors &mdash; a perfect second act to the curry house.</div>
+      <span class="stop-tag">&#11088; 4.6 &middot; vegan sushi</span>
+    </div>
+  </div>
+
+  <div class="day-label">afternoon</div>
+  <div class="stop">
+    <div class="stop-left"><div class="stop-time">3:00<br>pm</div><div class="stop-icon">&#9749;</div><div class="stop-line"></div></div>
+    <div class="stop-content">
+      <div class="stop-name">Kadamba Kafe</div>
+      <div class="stop-desc">We'll slow down with a matcha or fresh juice at this beautiful vegetarian cafe. Cozy energy, great baked goods, and a lovely vibe to ease into the rest of the afternoon.</div>
+      <span class="stop-tag">&#11088; 4.9 &middot; cafe</span>
+    </div>
+  </div>
+  <div class="stop">
+    <div class="stop-left"><div class="stop-time">4:00<br>pm</div><div class="stop-icon">&#127751;</div><div class="stop-line"></div></div>
+    <div class="stop-content">
+      <div class="stop-name">Brooklyn Bridge Park</div>
+      <div class="stop-desc">A walk along the waterfront with the full Manhattan skyline in front of us. We'll hit Pier 1, maybe catch Jane's Carousel, and take way too many photos.</div>
+      <span class="stop-tag">&#11088; 4.8 &middot; waterfront walk</span>
+    </div>
+  </div>
+  <div class="stop">
+    <div class="stop-left"><div class="stop-time">5:30<br>pm</div><div class="stop-icon">&#127963;</div><div class="stop-line"></div></div>
+    <div class="stop-content">
+      <div class="stop-name">Time Out Market New York</div>
+      <div class="stop-desc">Right in DUMBO, this food hall has dozens of vendors and a rooftop deck with views of both bridges. A perfect spot to snack, wander, and soak in the golden hour.</div>
+      <span class="stop-tag">&#11088; 4.5 &middot; food hall</span>
+    </div>
+  </div>
+
+  <div class="day-label">evening</div>
+  <div class="stop">
+    <div class="stop-left"><div class="stop-time">7:00<br>pm</div><div class="stop-icon">&#127830;</div><div class="stop-line"></div></div>
+    <div class="stop-content">
+      <div class="stop-name">Salt &amp; Pepper Deli &amp; Grill</div>
+      <div class="stop-desc">If we're still peckish before dinner, this Bushwick deli is always open. Their vegan chopped cheese is genuinely a hidden gem.</div>
+      <span class="stop-tag opt">optional snack stop</span>
+    </div>
+  </div>
+  <div class="stop">
+    <div class="stop-left"><div class="stop-time">8:00<br>pm</div><div class="stop-icon">&#127837;</div><div class="stop-line"></div></div>
+    <div class="stop-content">
+      <div class="stop-name">Coletta Italian Vegan Restaurant</div>
+      <div class="stop-desc">The main event. The most celebrated vegan Italian spot in the city &mdash; puttanesca meatballs, lumache alla vodka, and tiramisu to finish. We have a reservation.</div>
+      <span class="stop-tag">&#11088; 4.7 &middot; dinner</span>
+    </div>
+  </div>
+  <div class="stop">
+    <div class="stop-left"><div class="stop-time">10:00<br>pm</div><div class="stop-icon">&#127865;</div></div>
+    <div class="stop-content">
+      <div class="stop-name">Westlight</div>
+      <div class="stop-desc">We close the night on the rooftop bar in Williamsburg &mdash; cocktails, the Manhattan skyline glittering across the river, and just us. The perfect way to end your birthday.</div>
+      <span class="stop-tag">&#11088; 4.2 &middot; rooftop bar</span>
+    </div>
+  </div>
+
+  <div class="cake-note">
+    <div class="cake-icon">&#127874;</div>
+    <div class="cake-text">
+      <div class="cake-label">a little note</div>
+      <p>For your birthday celebration, we'll be ordering a special cake just for you.</p>
+      <div class="cake-handle">Instagram: @cakesbyaayushi</div>
+    </div>
+  </div>
+
+  <div class="closing-card">
+    <p>&ldquo;I can&rsquo;t wait to spend this day with you &mdash; happy birthday, love. You deserve every single bit of it.&rdquo;</p>
+    <p class="sign">&mdash; with so much love &#9829;</p>
+    <p class="change-note"><strong>Want to change anything?</strong><br>This is your day &mdash; if you&rsquo;d like to swap a stop, add something, or adjust the timing, just let me know and I&rsquo;ll make it happen.</p>
+  </div>
+  <div class="bottom-hearts">&#9829; &#9829; &#9829;</div>
+</div>
+<script>
+(function() {
+  var bg = document.getElementById('heartsBg');
+  var symbols = ['\u2665','\u2661','\u2764'];
+  for (var i = 0; i < 22; i++) {
+    var h = document.createElement('span');
+    h.className = 'hb';
+    h.textContent = symbols[i % symbols.length];
+    h.style.left = (Math.random() * 100) + '%';
+    h.style.fontSize = (10 + Math.random() * 14) + 'px';
+    h.style.animationDuration = (12 + Math.random() * 16) + 's';
+    h.style.animationDelay = (Math.random() * 14) + 's';
+    bg.appendChild(h);
+  }
+})();
+function openEnvelope() {
+  document.getElementById('envWrap').classList.add('opening');
+  setTimeout(function() { document.getElementById('envelope-screen').classList.add('gone'); }, 500);
+  setTimeout(function() { document.getElementById('letter').classList.add('show'); }, 900);
+}
+</script>
+</body>
+</html>
